@@ -55,19 +55,19 @@ from my_metric_utils import GPVIM, GPVI   # CalMyMetric, CalMyMetricContour, GPV
 
 markers = ["o", "s", "^", "p", "P", "H", "X", "D", "d", "2"]
 colors = ["red", "yellow", "blue", "green", "cyan", "pink", "purple", "orange", "sandybrown", "springgreen",
-          "mediumslateblue", "olive", "fuchsia", "teal", "grey"]          # 灰色放在最后
+          "mediumslateblue", "olive", "fuchsia", "teal", "grey"]          # Put gray at the end
 
 
 def load_exist_data(name: str):
     if name == "iris":
         dataset = load_iris()
         x, y = dataset["data"], dataset["target"]
-    if name == "wine":        # 最后一维很大
-        """需要归一化"""
+    if name == "wine":       # Last dimension is large
+        """Normalization"""
         dataset = load_wine()
         x, y = dataset["data"], dataset["target"]
     if name == "glass":
-        """需要归一化"""
+        """Normalization"""
         dataset = realarff.loadarff("./datasets/real-world/glass.arff")
         # print(dataset)
         data, meta = dataset
@@ -107,7 +107,7 @@ def load_exist_data(name: str):
         dataurl1 = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
         dataurl2 = "https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data"
         try:
-            df = pd.read_csv(dataset, header=None, delim_whitespace=True, index_col=0)  # 这个数据集要指定分割符
+            df = pd.read_csv(dataset, header=None, delim_whitespace=True, index_col=0)  # This dataset requires a specified delimiter
         except:
             df = pd.read_csv(dataurl1, header=None, delim_whitespace=True, index_col=0)
         # finally:
@@ -204,9 +204,9 @@ def load_exist_data(name: str):
         print(data.shape)
         exit(0)
 
-    # 保证类别号从0开始
+    # Make sure labels start at 0
     unilab = np.unique(y)
-    minilab = min(unilab[unilab != -1])  # 除了-1噪声类标之外的最小类标
+    minilab = min(unilab[unilab != -1])  # The smallest class label, excluding the -1 noise class
     if minilab != 0:
         for i in range(len(y)):
             if y[i] != -1:
@@ -218,24 +218,24 @@ def load_exist_data(name: str):
 def make_simulation_data(name):
     if name == 'rand':
         x, y = make_blobs(n_samples=50, n_features=3, centers=3, center_box=(-5, 5),
-                          cluster_std=0.5)  # center_box区间越大，std越小，则越集中
+                          cluster_std=0.5)  # A larger center_box interval combined with a smaller standard deviation results in greater data concentration
     elif name == "moon":
         x, y = make_moons(n_samples=500, noise=0.05, random_state=1)
     elif name == "moon-right":
         x, y = make_moons(n_samples=500, noise=0.05, random_state=1)
 
-        """若是2类的话，把其中一类(比如moon)变个位置"""
+        """In the case of two classes, relocate one of the classes (e.g., the 'moon' class)"""  
         move = True
         if move:
             for idx, arr in enumerate(x):
                 if y[idx] == 1:
-                    # arr += 1.5        # inplace, 第一维和第二维都往右上角移动
-                    arr[0], arr[1] = arr[0]+.5, arr[1]+0    # inplace，往右移
-                    # arr[0], arr[1] = arr[0]+0, arr[1]-.5      # inplace, 往下移
+                    # arr += 1.5        # inplace, shift along the first and second dimensions toward the top-right
+                    arr[0], arr[1] = arr[0]+.5, arr[1]+0    # inplace, move to the right
+                    # arr[0], arr[1] = arr[0]+0, arr[1]-.5      # inplace, move to the down
     elif name =="moon2":
         x, y = make_moons(n_samples=50, noise=0.05)
     elif name == "circle":
-        x, y = make_circles(n_samples=200, noise=0.02, factor=0.3)  # factor越小，两圆环相差越大
+        x, y = make_circles(n_samples=200, noise=0.02, factor=0.3)  # Smaller factor → greater gap between the two rings
     elif name == "artificial1":
         """
         DBSCAN(eps=0.2, min_samples=5)
@@ -243,29 +243,29 @@ def make_simulation_data(name):
         X1, y1 = make_circles(n_samples=500, factor=.6,
                               noise=.03)
         X2, y2 = make_blobs(n_samples=100, n_features=2, centers=[[1.2, 1.2]], cluster_std=[[.1]],
-                            random_state=9)  # center这样设能产生只有一类
-        y2 = np.array([2] * len(y2))  # 手动设置为第三类
+                            random_state=9)  # This center setting produces a single class
+        y2 = np.array([2] * len(y2))  # Manually set as the third class
         x = np.concatenate((X1, X2))
         y = np.concatenate((y1, y2))
     elif name == "artificial2":
         """
         """
         X1, y1 = make_blobs(n_samples=100, n_features=2, centers=[[1.2, 1.2]], cluster_std=[[.1]],
-                            random_state=9)  # center这样设能产生只有一类
+                            random_state=9)  # This center setting produces a single class
 
         X2, y2 = make_blobs(n_samples=100, n_features=2, centers=[[1.3, 1.3]], cluster_std=[[.2]], random_state=10)
-        y2 = np.array([1] * len(y2))  # 手动设置为第二类
+        y2 = np.array([1] * len(y2))  # Manually set as the second class
         x = np.concatenate((X1, X2))
         y = np.concatenate((y1, y2))
     elif name == "artificial3":
-        X1, y1 = make_blobs(n_samples=50, n_features=2, centers=[[1.1, 1.1]], cluster_std=[[0.2]], random_state=9)  # center这样设能产生只有一类
+        X1, y1 = make_blobs(n_samples=50, n_features=2, centers=[[1.1, 1.1]], cluster_std=[[0.2]], random_state=9)  # This center setting produces a single class
         X2, y2 = make_blobs(n_samples=50, n_features=2, centers=[[2.1, 4.1]], cluster_std=[[0.2]], random_state=10)
         X3, y3 = make_blobs(n_samples=50, n_features=2, centers=[[3.1, 3.1]], cluster_std=[[0.2]], random_state=11)
-        X4, y4 = make_gaussian_quantiles(n_samples=80, n_features=2, cov=1.5, mean=[2,3])     # mean是中心位置
+        X4, y4 = make_gaussian_quantiles(n_samples=80, n_features=2, cov=1.5, mean=[2,3])     # mean is center
         # X4, y4 = make_blobs(n_samples=50, n_features=2, centers=[[2,3]], cluster_std=[[2]], random_state=11)
-        y2 = np.array([1] * len(y2))   # 手动设置第二类
-        y3 = np.array([2] * len(y3))   # 手动设置第三类
-        y4 = np.array([-1] * len(y4))  # 手动设置噪声类
+        y2 = np.array([1] * len(y2))    # Manually set as the second class
+        y3 = np.array([2] * len(y3))   # Manually set as the third class
+        y4 = np.array([-1] * len(y4))  # Manually set as the noise class
         x = np.concatenate((X1, X2, X3, X4))
         y = np.concatenate((y1, y2, y3, y4))
 
@@ -331,19 +331,19 @@ class RUN:
     def fit_clusters(self, data, data_name, algorithm, args, kwds):
 
         pre_labels = algorithm(*args, **kwds).fit_predict(data)   # if dont use ground true label for external index
-        # pre_labels = y                       # 测试真实类别时        if provide ground true labels for external index
+        # pre_labels = y                       # test really class     if provide ground true labels for external index
 
         pred_y = pre_labels
-        # print(f"预测类别：{pred_y}")
+        # print(f"Predicted class: {pred_y}")
         counter = Counter(pred_y)
-        print(f"预测出的各簇的数量:{counter}")
+        print(f"The number of clusters predicted:{counter}")
 
 
         return pred_y, self.ans_dict
 
     def my_metric(self, x, pred_y,  y=None):
 
-        """处理一波"""
+        """# Process once"""
         oricluster, orilabel, _, _ = make_clusters(x, y)
         # newcluster2draw, newlabel2draw, newcluster2cal, newlabel2cal = make_clusters(x, pred_y)
         newcluster2draw, newlabel2draw, newcluster2cal, newlabel2cal, resp_ori_idxes, resp_ori_idxes2cal = make_clustersV2(x, pred_y)
@@ -356,9 +356,9 @@ class RUN:
             calgpvim = GPVIM(newcluster2cal, newlabel2cal, resp_ori_idxes2cal, len(x))
             wholegpvim, gpvims_pointdis, gpvim_time = calgpvim.cal_gpvim()
             gpvims, gpvimpointdis = gpvims_pointdis[0], gpvims_pointdis[1]
-            # print(f"各簇的gpvim：{[np.mean(item) for item in gpvims]}")
+            # print(f"gpvim of each cluster:{[np.mean(item) for item in gpvims]}")
 
-            print(f"总体 GPVIM：{wholegpvim}")
+            print(f"Total GPVIM:{wholegpvim}")
             self.ans_dict["gpvim"] = {"time": gpvim_time, "score":wholegpvim}
         except:
             self.ans_dict["gpvim"] = {"time": np.NAN, "score": np.NAN}
@@ -368,7 +368,7 @@ class RUN:
         try:
             calgpvi = GPVI(newcluster2cal, newlabel2cal, resp_ori_idxes2cal, len(x))
             wholegpvi, gpvis, gpvi_time = calgpvi.cal_gpvi()
-            print(f"总体 GPVI: {wholegpvi}")
+            print(f"Total GPVI: {wholegpvi}")
             self.ans_dict["gpvi"] = {"time":gpvi_time, "score":wholegpvi}
         except:
             self.ans_dict["gpvi"] = {"time":np.NAN, "score":np.NAN}
@@ -383,7 +383,7 @@ if __name__=="__main__":
     # x, y, dataname = load_exist_data("zelnik4")
     print(f"Data: {dataname}, samples: {x.shape[0]}, features: {x.shape[1]}, class: {np.unique(y)}")
 
-    """极端数据1"""
+    """Extreme data 1"""
     # x, y, dataname = np.array([
     #            [0, 9],
     #            [0, 9.5],
@@ -398,7 +398,7 @@ if __name__=="__main__":
     #     [3, 3],
     #     [3, 0]]), np.array([0,0,0,0,0,0,1,1,1,1,1,1]), 'check'
 
-    """极端数据2"""
+    """Extreme data 2"""
     # x, y, dataname = np.array([[0, 9],
     #                            [0, 9.5],
     #                            [7, 0],
@@ -414,7 +414,7 @@ if __name__=="__main__":
     #
     #                         ]), np.array([0,0,0,0,0,0,1,1,1,1,1,1]), "check"
 
-    """极端数据3"""
+    """Extreme data 3"""
     # x, y, dataname = np.array([[0, 1],
     #                            [0.2, 1.5],
     #                            [0.25, 1.25],
@@ -432,7 +432,7 @@ if __name__=="__main__":
     #
     # print(x.shape)
 
-    """归一化"""
+    """Normalization"""
     # x = guiyi(x, name="StandardScaler")  # MinMaxScaler  StandardScaler
 
     # print(f"Ground True label：{y}")
@@ -443,13 +443,13 @@ if __name__=="__main__":
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, hdbscan.HDBSCAN, (), {'min_cluster_size':15, 'min_samples':6})
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps":0.5, "min_samples":10})        # circle
     pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps":0.37254, "min_samples":28})      # moon
-    # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.2, "min_samples": 28})      # moon右移,zelnik4
+    # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.2, "min_samples": 28})      # moon right,zelnik4
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.5, "min_samples": 10})    # 2sp2glob
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.3, "min_samples": 10})  # 2sp2glob
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 3, "min_samples": 10})  # 3spiral
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.03, "min_samples": 6})  # artificial1
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, DBSCAN, (), {"eps": 0.3, "min_samples": 6})  # glass
-    # pred_y, ans_dict = runner.fit_clusters(x, dataname, hdbscan.HDBSCAN, (), {"min_cluster_size":10})   # digits，yeast, moon右移
+    # pred_y, ans_dict = runner.fit_clusters(x, dataname, hdbscan.HDBSCAN, (), {"min_cluster_size":10})   # digits, yeast, moon right
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, hdbscan.HDBSCAN, (),
     #                                        {"min_cluster_size": 10, 'min_samples':10})  # iris
     # pred_y, ans_dict = runner.fit_clusters(x, dataname, GaussianMixture, (), {"n_components":6, "covariance_type":'full'})

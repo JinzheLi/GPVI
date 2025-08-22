@@ -23,7 +23,7 @@ def time_count(func):
         start = time.time()
         score, allscore = func(*args, **kwargs)
         end = time.time()
-        print(f"{func.__name__}的耗费时间：{end-start:.3f}s")
+        print(f"Execution time of {func.__name__}: {end - start:.3f}s")
         return score, allscore, end-start
     return run
 
@@ -43,7 +43,7 @@ def make_clusters(data, label):
     index = None
     unilab = np.unique(label)
     for i,lab in enumerate(unilab):
-        # if lab!=-1:    # 非噪声点
+        # if lab!=-1:    # Non-noise points
         #     clusters2cal.append(data[np.where(label == lab)[0]])
         if lab==-1:
             index = i
@@ -72,9 +72,9 @@ def make_clustersV2(data, label):
     index = None
     unilab = np.unique(label)
     for i,lab in enumerate(unilab):
-        # if lab!=-1:    # 非噪声点
+        # if lab!=-1:    # Non-noise points
         #     clusters2cal.append(data[np.where(label == lab)[0]])
-        if lab==-1:      # 判断有无噪声类
+        if lab==-1:      # Check for noise class
             index = i
         clusters.append(data[np.where(label == lab)[0]])
         respect_ori_indexes.append(np.where(label == lab)[0])
@@ -84,7 +84,7 @@ def make_clustersV2(data, label):
         #     newlabel2cal.append([unilab[idx]] * len(clus))
         newlabel.append([unilab[idx]] * len(clus))  # extend
 
-    if index is not None:   # 噪声类
+    if index is not None:   # noise class
         clusters2cal = copy.deepcopy(clusters)
         clusters2cal.pop(index)
         newlabel2cal = copy.deepcopy(newlabel)
@@ -102,7 +102,7 @@ def make_clustersV2(data, label):
 
 def topk_(matrix, K, axis=1):
     """
-    类似与pytorch的topk，取topk最大的
+    Like PyTorch topk: select the top-k largest values
     :param matrix:
     :param K:
     :param axis:
